@@ -137,9 +137,77 @@ function initTestimonials() {
    Enquanto vazio, o formulário NÃO simula envio e o botão de WhatsApp fica inativo. */
 const CONTACT = { whatsapp: '5511914977007', email: 'settedistribuidora0777@gmail.com' };
 
-/* Web3Forms: a Access Key é pública por desenho (só permite enviar ao e-mail cadastrado). */
-const LEAD_ENDPOINT = 'https://api.web3forms.com/submit';
-const LEAD_ACCESS_KEY = 'bb2cb53e-a1a4-43b9-93e2-d408652ca2b7';
+/* Envio de leads.
+   1) Função própria (Cloudflare Worker + Resend + Turnstile), pasta worker/.
+      Ativa quando endpoint e turnstileSiteKey estiverem preenchidos (ambos PÚBLICOS).
+   2) Enquanto isso, fallback no Web3Forms (Access Key pública por desenho).
+   Remover o Web3Forms depois do teste real da função. */
+const LEAD_API = {
+  endpoint: '',          // ex.: https://telaviva-leads.<conta>.workers.dev/lead
+  turnstileSiteKey: '',  // chave de site (pública) do widget Turnstile
+};
+const WEB3FORMS = {
+  endpoint: 'https://api.web3forms.com/submit',
+  accessKey: 'bb2cb53e-a1a4-43b9-93e2-d408652ca2b7',
+};
+const useOwnLeadApi = () => Boolean(LEAD_API.endpoint && LEAD_API.turnstileSiteKey);
+
+/* Turnstile: o script da Cloudflare só carrega quando a pessoa interage com o formulário. */
+let turnstileWidget = null;
+function loadTurnstile(container) {
+  if (!useOwnLeadApi() || !container || turnstileWidget !== null) return;
+  turnstileWidget = 'loading';
+  window.__tvTurnstileReady = () => {
+    try {
+      turnstileWidget = window.turnstile.render(container, {
+        sitekey: LEAD_API.turnstileSiteKey,
+        language: 'pt-br',
+        theme: 'light',
+      });
+    } catch {
+      turnstileWidget = null;
+    }
+  };
+  const s = document.createElement('script');
+  s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__tvTurnstileReady';
+  s.async = true;
+  s.onerror = () => { turnstileWidget = null; };
+  document.head.appendChild(s);
+}
+const turnstileToken = () =>
+  (typeof turnstileWidget === 'string' && turnstileWidget !== 'loading' && window.turnstile?.getResponse(turnstileWidget)) || '';
+const resetTurnstile = () => {
+  if (typeof turnstileWidget === 'string' && turnstileWidget !== 'loading') window.turnstile?.reset(turnstileWidget);
+};
+
+async function sendLead(fields) {
+  if (useOwnLeadApi()) {
+    const res = await fetch(LEAD_API.endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fields),
+    });
+    const data = await res.json().catch(() => ({}));
+    return res.ok && data.ok === true;
+  }
+  const res = await fetch(WEB3FORMS.endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      access_key: WEB3FORMS.accessKey,
+      subject: `Novo lead B2B — ${fields.studio}`,
+      from_name: 'Tela Viva (site)',
+      botcheck: fields.botcheck,
+      Estudio: fields.studio,
+      CNPJ: fields.cnpj,
+      Nome: fields.name,
+      WhatsApp: fields.whatsapp,
+      'Sessoes por mes': fields.volumeLabel,
+    }),
+  });
+  const data = await res.json().catch(() => ({}));
+  return res.ok && data.success !== false;
+}
 
 const waLink = (text = '') =>
   `https://wa.me/${CONTACT.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
@@ -210,6 +278,8 @@ function initPartnerForm() {
     setFieldError(e.target, '');
   });
 
+  form.addEventListener('focusin', () => loadTurnstile(form.querySelector('#turnstile')), { once: true });
+
   form.querySelectorAll('input, select').forEach((el) => {
     el.addEventListener('input', () => { if (el !== cnpj && el !== phone) setFieldError(el, ''); });
   });
@@ -239,7 +309,7 @@ function initPartnerForm() {
     }
 
     /* ── Envio ────────────────────────────────────────────────────
-       Envia o lead por e-mail (Web3Forms) e abre o WhatsApp oficial com os dados
+       Envia o lead por e-mail (função própria ou Web3Forms) e abre o WhatsApp oficial com os dados
        preenchidos. Os canais são independentes: se um falhar, o outro segue.
        Sem canal configurado, não simulamos sucesso. */
     if (!CONTACT.whatsapp) {
@@ -248,9 +318,17 @@ function initPartnerForm() {
       return;
     }
 
+    const token = turnstileToken();
+    if (useOwnLeadApi() && !token) {
+      status.dataset.kind = 'err';
+      status.textContent = 'Conclua a verificação anti-robô acima do botão e envie de novo.';
+      loadTurnstile(form.querySelector('#turnstile'));
+      return;
+    }
+
     submit.dataset.busy = 'true';
     const label = submit.dataset.label || submit.textContent;
-    submit.textContent = 'Abrindo o WhatsApp…';
+    submit.textContent = 'Enviando…';
 
     const v = (id) => form.querySelector(`#${id}`)?.value.trim() ?? '';
     const volume = form.querySelector('#volume')?.selectedOptions[0]?.textContent ?? '';
@@ -274,26 +352,20 @@ function initPartnerForm() {
       waOpened = Boolean(win);
 
       try {
-        const res = await fetch(LEAD_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({
-            access_key: LEAD_ACCESS_KEY,
-            subject: `Novo lead B2B — ${v('studio')}`,
-            from_name: 'Tela Viva (site)',
-            botcheck: form.querySelector('#botcheck')?.checked ? 'true' : '',
-            Estudio: v('studio'),
-            CNPJ: v('cnpj'),
-            Nome: v('name'),
-            WhatsApp: v('whatsapp'),
-            'Sessoes por mes': volume,
-          }),
+        emailSent = await sendLead({
+          cnpj: v('cnpj'),
+          studio: v('studio'),
+          name: v('name'),
+          whatsapp: v('whatsapp'),
+          volume: v('volume'),
+          volumeLabel: volume,
+          botcheck: form.querySelector('#botcheck')?.checked ? 'true' : '',
+          turnstileToken: token,
         });
-        const data = await res.json().catch(() => ({}));
-        emailSent = res.ok && data.success !== false;
       } catch {
         emailSent = false;
       }
+      resetTurnstile();
 
       if (emailSent || waOpened) {
         status.dataset.kind = 'ok';

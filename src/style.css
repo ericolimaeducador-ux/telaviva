@@ -993,3 +993,20 @@ button[data-busy="true"] { opacity: .6; pointer-events: none; }
   background: rgba(251, 247, 241, .88);
 }
 .testimonial-source { font-style: italic; }
+
+/* ─────────────── Página legal (Política de Privacidade) ─────────────── */
+.legal { padding-block: var(--s-16) var(--section-y); }
+.legal h1 { margin-bottom: var(--s-2); }
+.legal-meta { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--fg-muted); margin-bottom: var(--s-8); }
+.legal section { margin-top: var(--s-12); }
+.legal section .h3 { margin-bottom: var(--s-4); }
+.legal p, .legal li { color: var(--ink-700); max-width: 68ch; }
+.legal p + p { margin-top: var(--s-4); }
+.legal ul { padding-left: 1.2em; display: grid; gap: var(--s-2); margin-top: var(--s-3); }
+.legal a:not(.btn) { text-decoration: underline; text-underline-offset: 3px; }
+.legal strong { color: var(--ink-900); font-weight: 600; }
+.legal-back { margin-top: var(--s-16); }
+.site-footer--legal { padding-block: var(--s-8); }
+.form-legal a { text-decoration: underline; text-underline-offset: 3px; }
+
+.turnstile:empty { display: none; }

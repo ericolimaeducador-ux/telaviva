@@ -9,13 +9,13 @@ Landing page **Tela Viva — Cuidados para Pele Tatuada**. Erico é representant
 Diferencial: protocolo em 3 fases, com preparo ANTES da tatuagem.
 Operadora: JSETTE7 Comércio de Produtos Médicos e Hospitalares LTDA, CNPJ 54.765.439/0001-34 (a marca é Tela Viva; o nome da empresa só aparece no rodapé/JSON-LD).
 Objetivo no lançamento: **captação** (B2B estúdios + interessados). Sem checkout, sem preço publicado. Checkout próprio só depois.
-Sem páginas de termos/privacidade (decisão do Erico: é só landing).
+Política de Privacidade em `politica-de-privacidade.html` (Vite multi-page), com link no formulário e no rodapé. Minuta v1.0, pendente de revisão jurídica; atualizar a lista de operadores sempre que mudar um fornecedor.
 
 ## Estado atual (main publicada)
 URL: https://ericolimaeducador-ux.github.io/telaviva/ — deploy por GitHub Actions a cada push na `main`.
 Hero: tipografia (lockup em HTML + título) sobre a pele clara desfocada com véu claro — decisão do Erico, não trocar por imagem com logo. As peles com a logo "tatuada" (imagens ILUSTRATIVAS de marca, rótulo "Imagem ilustrativa") entram só nas caixas de imagem de pele, hoje a seção "problema" (`tela-pele-problema.webp`). Nunca apresentá-las como resultado ou pele de cliente.
 Feito: 11 seções; alegações corrigidas; depoimento da Paula Carolina (literal) + 3 imagens autorizadas da Pele Rara em `public/img/pele-rara-*.webp`; contato oficial; rodapé com razão social/CNPJ; SEO + Open Graph + JSON-LD + robots/sitemap + favicons PNG; fontes self-hosted (@fontsource); paleta pastel.
-Formulário B2B: abre o WhatsApp com mensagem pré-preenchida (config em `CONTACT` no topo de `src/main.js`). Sem backend.
+Formulário B2B: envia o lead por e-mail e abre o WhatsApp com mensagem pré-preenchida (canais independentes). Envio: função própria `worker/` (Cloudflare Worker + Resend + Turnstile; segredos só em GitHub Secrets) quando `LEAD_API` em `src/main.js` estiver preenchido; até lá, fallback Web3Forms. Ver `worker/README.md`.
 
 ## Design (travado)
 - Pastel claro, sem cores pesadas, sem starbursts, sem gradientes chamativos. Tinta `#16140F` só em texto, logo e botões.
