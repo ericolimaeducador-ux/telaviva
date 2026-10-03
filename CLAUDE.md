@@ -33,7 +33,7 @@ Formulário B2B: abre o WhatsApp com mensagem pré-preenchida (config em `CONTAC
 - O Kit Tattoo traz só a Espuma Facial de Sensação Ultra-Leve 150 ml (confirmado pelo Erico; a Espuma Suave de Amplo Espectro, com clorexidina, NÃO é do kit). O protocolo oficial menciona a Espuma/Sabonete de Amplo Espectro na 1ª semana antes e no pós: pendente confirmar com a Pele Rara que a Ultra-leve serve nessas fases.
 - Nunca mostrar partículas atravessando pele lesionada.
 - Depoimentos: reais, autorizados, citação literal, **sem rosto** (só recorte da tatuagem). O da Paula Carolina foi concedido à Pele Rara®: manter a marca e a linha de origem ("Depoimento concedido à Pele Rara®, com uso autorizado."); nunca editar nem atribuir à Tela Viva. Sem rosto ou antes/depois gerados por IA.
-- Produtos e rótulos da Pele Rara® nunca recebem a marca Tela Viva. Imagens do fabricante só com o crédito e sem alteração do conteúdo (exceto recorte para tirar rosto).
+- Produtos e rótulos da Pele Rara® nunca recebem a marca Tela Viva. Tela Viva é a loja/representante; onde se fala do produto, do protocolo ou da comparação, a marca é **Pele Rara®** (ex.: coluna da tabela comparativa). Imagens do fabricante só com o crédito e sem alteração do conteúdo (exceto recorte para tirar rosto).
 - Ilustrações de mecanismo levam "representação ilustrativa".
 - "O único protocolo que começa antes da agulha" é afirmação absoluta do Erico: manter, mas ele deve guardar a pesquisa que a sustenta.
 
