@@ -59,3 +59,6 @@ Originais em alta resolução das imagens Pele Rara (hoje 600 px); protocolo vig
 
 ## Foto do kit
 `public/img/kit-tattoo-*.webp`: cena gerada (braço tatuado, sem rosto) com os rótulos aplicados a partir dos arquivos oficiais da Pele Rara (bisnaga: render oficial do Hidratante Concentrado 2X 60 g; espuma: texto da caixa oficial). Legenda "Imagem ilustrativa". Nunca gerar rótulo por IA: renders com microtexto corrompido não servem de fonte.
+
+## Depoimento da Paula
+Card com citação + 2 fotos lado a lado, legendas exatamente como na página da Pele Rara® ("Com Pele Rara®" = figura feminina; "Sem Pele Rara®" = tigre). `public/img/depo-paula-*.webp`. A foto do tigre saiu de um print (287 px): trocar pelo arquivo original `dep-tattoo-paula-pelerara.svg` quando o Erico enviar.
