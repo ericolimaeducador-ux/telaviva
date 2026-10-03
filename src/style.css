@@ -1009,4 +1009,3 @@ button[data-busy="true"] { opacity: .6; pointer-events: none; }
 .site-footer--legal { padding-block: var(--s-8); }
 .form-legal a { text-decoration: underline; text-underline-offset: 3px; }
 
-.turnstile:empty { display: none; }
