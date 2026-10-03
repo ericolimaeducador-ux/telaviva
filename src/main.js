@@ -137,77 +137,6 @@ function initTestimonials() {
    Enquanto vazio, o formulário NÃO simula envio e o botão de WhatsApp fica inativo. */
 const CONTACT = { whatsapp: '5511914977007', email: 'settedistribuidora0777@gmail.com' };
 
-/* Envio de leads.
-   1) Função própria (Cloudflare Worker + Resend + Turnstile), pasta worker/.
-      Ativa quando endpoint e turnstileSiteKey estiverem preenchidos (ambos PÚBLICOS).
-   2) Enquanto isso, fallback no Web3Forms (Access Key pública por desenho).
-   Remover o Web3Forms depois do teste real da função. */
-const LEAD_API = {
-  endpoint: '',          // ex.: https://telaviva-leads.<conta>.workers.dev/lead
-  turnstileSiteKey: '0x4AAAAAAFNGsovcwnENNhZX', // chave de site (pública) do widget Turnstile
-};
-const WEB3FORMS = {
-  endpoint: 'https://api.web3forms.com/submit',
-  accessKey: 'bb2cb53e-a1a4-43b9-93e2-d408652ca2b7',
-};
-const useOwnLeadApi = () => Boolean(LEAD_API.endpoint && LEAD_API.turnstileSiteKey);
-
-/* Turnstile: o script da Cloudflare só carrega quando a pessoa interage com o formulário. */
-let turnstileWidget = null;
-function loadTurnstile(container) {
-  if (!useOwnLeadApi() || !container || turnstileWidget !== null) return;
-  turnstileWidget = 'loading';
-  window.__tvTurnstileReady = () => {
-    try {
-      turnstileWidget = window.turnstile.render(container, {
-        sitekey: LEAD_API.turnstileSiteKey,
-        language: 'pt-br',
-        theme: 'light',
-      });
-    } catch {
-      turnstileWidget = null;
-    }
-  };
-  const s = document.createElement('script');
-  s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__tvTurnstileReady';
-  s.async = true;
-  s.onerror = () => { turnstileWidget = null; };
-  document.head.appendChild(s);
-}
-const turnstileToken = () =>
-  (typeof turnstileWidget === 'string' && turnstileWidget !== 'loading' && window.turnstile?.getResponse(turnstileWidget)) || '';
-const resetTurnstile = () => {
-  if (typeof turnstileWidget === 'string' && turnstileWidget !== 'loading') window.turnstile?.reset(turnstileWidget);
-};
-
-async function sendLead(fields) {
-  if (useOwnLeadApi()) {
-    const res = await fetch(LEAD_API.endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(fields),
-    });
-    const data = await res.json().catch(() => ({}));
-    return res.ok && data.ok === true;
-  }
-  const res = await fetch(WEB3FORMS.endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({
-      access_key: WEB3FORMS.accessKey,
-      subject: `Novo lead B2B — ${fields.studio}`,
-      from_name: 'Tela Viva (site)',
-      botcheck: fields.botcheck,
-      Estudio: fields.studio,
-      CNPJ: fields.cnpj,
-      Nome: fields.name,
-      WhatsApp: fields.whatsapp,
-      'Sessoes por mes': fields.volumeLabel,
-    }),
-  });
-  const data = await res.json().catch(() => ({}));
-  return res.ok && data.success !== false;
-}
 
 const waLink = (text = '') =>
   `https://wa.me/${CONTACT.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
@@ -278,8 +207,6 @@ function initPartnerForm() {
     setFieldError(e.target, '');
   });
 
-  form.addEventListener('focusin', () => loadTurnstile(form.querySelector('#turnstile')), { once: true });
-
   form.querySelectorAll('input, select').forEach((el) => {
     el.addEventListener('input', () => { if (el !== cnpj && el !== phone) setFieldError(el, ''); });
   });
@@ -309,8 +236,8 @@ function initPartnerForm() {
     }
 
     /* ── Envio ────────────────────────────────────────────────────
-       Envia o lead por e-mail (função própria ou Web3Forms) e abre o WhatsApp oficial com os dados
-       preenchidos. Os canais são independentes: se um falhar, o outro segue.
+       Sem backend: o formulário abre o WhatsApp oficial com os dados
+       preenchidos; o lead só existe quando a pessoa toca em enviar.
        Sem canal configurado, não simulamos sucesso. */
     if (!CONTACT.whatsapp) {
       status.dataset.kind = 'err';
@@ -318,69 +245,32 @@ function initPartnerForm() {
       return;
     }
 
-    const token = turnstileToken();
-    if (useOwnLeadApi() && !token) {
-      status.dataset.kind = 'err';
-      status.textContent = 'Conclua a verificação anti-robô acima do botão e envie de novo.';
-      loadTurnstile(form.querySelector('#turnstile'));
-      return;
-    }
-
     submit.dataset.busy = 'true';
     const label = submit.dataset.label || submit.textContent;
-    submit.textContent = 'Enviando…';
-
-    const v = (id) => form.querySelector(`#${id}`)?.value.trim() ?? '';
-    const volume = form.querySelector('#volume')?.selectedOptions[0]?.textContent ?? '';
-    let waOpened = false;
-    let emailSent = false;
+    submit.textContent = 'Abrindo o WhatsApp…';
 
     try {
+      const v = (id) => form.querySelector(`#${id}`)?.value.trim() ?? '';
       const text = [
         'Olá! Quero informações sobre a revenda do Kit Tattoo.',
         `Estúdio: ${v('studio')}`,
         `CNPJ: ${v('cnpj')}`,
         `Nome: ${v('name')}`,
         `WhatsApp: ${v('whatsapp')}`,
-        `Sessões por mês: ${volume}`,
+        `Sessões por mês: ${form.querySelector('#volume')?.selectedOptions[0]?.textContent ?? ''}`,
       ].join('\n');
 
-      // window.open antes de qualquer await, senão o navegador bloqueia o pop-up.
       // Sem a feature 'noopener': com ela, window.open devolve null mesmo quando abre.
       const win = window.open(waLink(text), '_blank');
-      if (win) win.opener = null;
-      waOpened = Boolean(win);
+      if (!win) throw new Error('popup bloqueado');
+      win.opener = null;
 
-      try {
-        emailSent = await sendLead({
-          cnpj: v('cnpj'),
-          studio: v('studio'),
-          name: v('name'),
-          whatsapp: v('whatsapp'),
-          volume: v('volume'),
-          volumeLabel: volume,
-          botcheck: form.querySelector('#botcheck')?.checked ? 'true' : '',
-          turnstileToken: token,
-        });
-      } catch {
-        emailSent = false;
-      }
-      resetTurnstile();
-
-      if (emailSent || waOpened) {
-        status.dataset.kind = 'ok';
-        status.textContent = emailSent && waOpened
-          ? 'Recebemos o seu contato e abrimos o WhatsApp para agilizar o retorno.'
-          : emailSent
-            ? 'Recebemos o seu contato. Se preferir falar agora, use o botão "Falar no WhatsApp".'
-            : 'Não conseguimos registrar o envio por e-mail. Abrimos o WhatsApp: envie a mensagem para concluir.';
-        form.reset();
-      } else {
-        throw new Error('nenhum canal disponível');
-      }
+      status.dataset.kind = 'ok';
+      status.textContent = 'Abrimos o WhatsApp com os seus dados. É só enviar a mensagem.';
+      form.reset();
     } catch {
       status.dataset.kind = 'err';
-      status.textContent = 'Não conseguimos enviar. Tente novamente ou use o botão "Falar no WhatsApp" abaixo.';
+      status.textContent = 'Não conseguimos abrir o WhatsApp. Tente novamente ou use o botão "Falar no WhatsApp" abaixo.';
     } finally {
       submit.dataset.busy = 'false';
       submit.textContent = label;

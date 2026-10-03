@@ -15,7 +15,7 @@ Política de Privacidade em `politica-de-privacidade.html` (Vite multi-page), co
 URL: https://ericolimaeducador-ux.github.io/telaviva/ — deploy por GitHub Actions a cada push na `main`.
 Hero: tipografia (lockup em HTML + título) sobre a pele clara desfocada com véu claro — decisão do Erico, não trocar por imagem com logo. As peles com a logo "tatuada" (imagens ILUSTRATIVAS de marca, rótulo "Imagem ilustrativa") entram só nas caixas de imagem de pele, hoje a seção "problema" (`tela-pele-problema.webp`). Nunca apresentá-las como resultado ou pele de cliente.
 Feito: 11 seções; alegações corrigidas; depoimento da Paula Carolina (literal) + 3 imagens autorizadas da Pele Rara em `public/img/pele-rara-*.webp`; contato oficial; rodapé com razão social/CNPJ; SEO + Open Graph + JSON-LD + robots/sitemap + favicons PNG; fontes self-hosted (@fontsource); paleta pastel.
-Formulário B2B: envia o lead por e-mail e abre o WhatsApp com mensagem pré-preenchida (canais independentes). Envio: função própria `worker/` (Cloudflare Worker + Resend + Turnstile; segredos só em GitHub Secrets) quando `LEAD_API` em `src/main.js` estiver preenchido; até lá, fallback Web3Forms. Ver `worker/README.md`.
+Formulário B2B: só abre o WhatsApp oficial com a mensagem pré-preenchida (decisão do Erico, 03/10/2026: e-mail/Web3Forms/Cloudflare Worker foram testados e removidos por complexidade; ver histórico do git se voltar o assunto). Sem backend.
 
 ## Design (travado)
 - Pastel claro, sem cores pesadas, sem starbursts, sem gradientes chamativos. Tinta `#16140F` só em texto, logo e botões.
