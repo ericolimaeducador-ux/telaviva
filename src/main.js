@@ -1,3 +1,11 @@
+/* Fontes self-hosted (sem requisição ao Google Fonts) */
+import '@fontsource/playfair-display/latin-400.css';
+import '@fontsource/playfair-display/latin-500.css';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-500.css';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+
 /* ============================================================
    TELA VIVA — comportamento da landing
    Vanilla ES modules. Cada init() é um componente isolado,
@@ -62,9 +70,20 @@ function initFaq() {
 /* ─────────── Depoimentos ───────────
    ⚠ COMPLIANCE: só renderiza com acervo REAL licenciado.
    Formato esperado de cada item:
-   { image, alt, quote, name, studio, city, phase }
-   Enquanto TESTIMONIALS estiver vazio, a seção permanece oculta. */
-const TESTIMONIALS = [];
+   { image?, alt?, quote, name, studio?, city?, phase }
+   image/studio/city são opcionais. Imagem: só recorte da tatuagem, sem rosto.
+   Citação sempre literal, sem edição. Enquanto estiver vazio, a seção fica oculta. */
+const TESTIMONIALS = [
+  {
+    quote: 'Usei a Pele Rara® em uma perna e um hidratante 3x mais caro na outra. O lado com Pele Rara® ficou claramente melhor e com menos dor.',
+    name: 'Paula Carolina',
+    phase: 'Pós-tatuagem · comparativo lado a lado',
+  },
+];
+
+const escapeHtml = (v = '') => String(v).replace(/[&<>"']/g, (c) => (
+  { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+));
 
 function initTestimonials() {
   const section = document.querySelector('[data-component="TestimonialGrid"]');
@@ -77,20 +96,33 @@ function initTestimonials() {
     return;
   }
 
-  grid.innerHTML = TESTIMONIALS.map((t) => `
+  grid.innerHTML = TESTIMONIALS.map((t) => {
+    const who = [t.name, t.studio, t.city].filter(Boolean).map(escapeHtml).join(' · ');
+    const img = t.image
+      ? `<img src="${escapeHtml(t.image)}" alt="${escapeHtml(t.alt)}" loading="lazy" />`
+      : '';
+    return `
     <figure class="testimonial">
-      <img src="${t.image}" alt="${t.alt}" loading="lazy" />
+      ${img}
       <figcaption class="testimonial-body">
-        <blockquote class="testimonial-quote">“${t.quote}”</blockquote>
-        <p class="testimonial-meta">${t.name} · ${t.studio} · ${t.city}</p>
-        <p class="testimonial-meta">${t.phase}</p>
+        <blockquote class="testimonial-quote">“${escapeHtml(t.quote)}”</blockquote>
+        <p class="testimonial-meta">${who}</p>
+        <p class="testimonial-meta">${escapeHtml(t.phase)}</p>
       </figcaption>
-    </figure>
-  `).join('');
+    </figure>`;
+  }).join('');
 
   section.hidden = false;
   section.setAttribute('data-state', 'ready');
 }
+
+/* ─────────── Canais de contato ───────────
+   Preencher com os dados oficiais. whatsapp: só dígitos com DDI+DDD (ex.: 5511900000000).
+   Enquanto vazio, o formulário NÃO simula envio e o botão de WhatsApp fica inativo. */
+const CONTACT = { whatsapp: '5511914977007', email: 'settedistribuidora0777@gmail.com' };
+
+const waLink = (text = '') =>
+  `https://wa.me/${CONTACT.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
 
 /* ─────────── Máscaras + validação do formulário B2B ─────────── */
 function maskCNPJ(value) {
@@ -186,23 +218,40 @@ function initPartnerForm() {
       return;
     }
 
-    /* ── ESTADO: sucesso ──────────────────────────────────────────
-       Sem backend nesta fase. Quando o endpoint existir, trocar por:
-         await fetch('/api/partners', { method:'POST', body: JSON.stringify(data) })
-       com try/catch, timeout e estado de erro de rede.
-       Nunca enviar dado de parceiro para serviço de terceiro sem consentimento. */
+    /* ── Envio ────────────────────────────────────────────────────
+       Sem backend: o formulário abre o WhatsApp oficial com os dados
+       preenchidos; o lead só existe quando o usuário toca em enviar.
+       Sem canal configurado, não simulamos sucesso. */
+    if (!CONTACT.whatsapp) {
+      status.dataset.kind = 'err';
+      status.textContent = 'Canal de contato em implantação. Seus dados não foram enviados.';
+      return;
+    }
+
     submit.dataset.busy = 'true';
     const label = submit.dataset.label || submit.textContent;
-    submit.textContent = 'Enviando…';
+    submit.textContent = 'Abrindo o WhatsApp…';
 
     try {
-      await new Promise((r) => setTimeout(r, 600));
+      const v = (id) => form.querySelector(`#${id}`)?.value.trim() ?? '';
+      const text = [
+        'Olá! Quero informações sobre a revenda do Kit Tattoo.',
+        `Estúdio: ${v('studio')}`,
+        `CNPJ: ${v('cnpj')}`,
+        `Nome: ${v('name')}`,
+        `WhatsApp: ${v('whatsapp')}`,
+        `Sessões por mês: ${form.querySelector('#volume')?.selectedOptions[0]?.textContent ?? ''}`,
+      ].join('\n');
+
+      const win = window.open(waLink(text), '_blank', 'noopener');
+      if (!win) throw new Error('popup bloqueado');
+
       status.dataset.kind = 'ok';
-      status.textContent = 'Recebido. Um consultor responde em até 4 horas úteis.';
+      status.textContent = 'Abrimos o WhatsApp com os seus dados. É só enviar a mensagem.';
       form.reset();
     } catch {
       status.dataset.kind = 'err';
-      status.textContent = 'Não conseguimos enviar agora. Tente novamente em instantes.';
+      status.textContent = 'Não conseguimos abrir o WhatsApp. Tente novamente ou use o botão "Falar no WhatsApp" abaixo.';
     } finally {
       submit.dataset.busy = 'false';
       submit.textContent = label;
@@ -238,11 +287,15 @@ function initReveal() {
 /* ─────────── CTAs ainda sem destino ─────────── */
 function initPendingLinks() {
   document.querySelectorAll('[data-pending="true"]').forEach((el) => {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      // TODO: trocar href pelo WhatsApp oficial e remover data-pending
-      console.warn('[Tela Viva] CTA sem destino definido:', el.dataset.track);
-    });
+    if (CONTACT.whatsapp) {
+      el.href = waLink('Olá! Tenho uma dúvida sobre o protocolo Tela Viva.');
+      el.target = '_blank';
+      el.rel = 'noopener';
+      el.removeAttribute('data-pending');
+      return;
+    }
+    el.setAttribute('aria-disabled', 'true');
+    el.addEventListener('click', (e) => e.preventDefault());
   });
 }
 
