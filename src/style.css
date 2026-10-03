@@ -875,3 +875,82 @@ button[data-busy="true"] { opacity: .6; pointer-events: none; }
 
 .contact-alt { margin-top: var(--s-4); font-size: var(--fs-micro); color: var(--fg-muted); }
 .contact-alt a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ============================================================
+   PASTEL v2 — tons claros; tinta (#16140F) só em texto, logo e botões
+   ============================================================ */
+:root {
+  --blush: #F3DFD3;
+  --sage:  #DCE5D6;
+  --oat:   #EFE6D8;
+  --ok:    #2D6A4F;
+  --err:   #8F3A1E;
+  --shadow: 0 2px 10px rgba(22, 20, 15, .05);
+  --shadow-lift: 0 8px 28px rgba(22, 20, 15, .08);
+}
+
+/* Hero: pele em pêssego claro, texto em tinta */
+.hero-media {
+  background:
+    url('./assets/skin-hero.jpg') center / cover no-repeat,
+    linear-gradient(145deg, #F3DFD3 0%, #EFE6D8 100%);
+  background-color: #F3DFD3;
+}
+.hero-scrim {
+  background: linear-gradient(180deg, rgba(251,247,241,.58) 0%, rgba(243,223,211,.45) 50%, rgba(251,247,241,.64) 100%);
+}
+.hero-content { color: var(--ink-900); }
+.hero-lockup { color: var(--ink-900); filter: none; }
+.hero-title { text-shadow: none; }
+.hero-sub { color: var(--ink-700); text-shadow: none; }
+.btn-ghost-light { --btn-fg: var(--ink-900); --btn-bd: rgba(22, 20, 15, .4); }
+.btn-ghost-light:hover { --btn-bg: rgba(22, 20, 15, .06); --btn-bd: var(--ink-900); }
+.hero-scroll-hint { background: rgba(22, 20, 15, .2); }
+.hero-scroll-hint span { background: var(--ink-900); }
+.site-header:not([data-stuck="true"]) { color: var(--ink-900); }
+
+/* Bifurcação */
+.path-card[data-path="b2c"] { background: var(--blush); border-color: transparent; }
+.path-card[data-path="b2b"] { background: var(--sage);  border-color: transparent; }
+.path-card[data-path]:hover { border-color: var(--ink-900); }
+.path-card[data-path][aria-pressed="true"] { border: 2px solid var(--ink-900); }
+
+/* Fases: a do meio continua em destaque, agora clara */
+.phase:nth-child(1) { background: var(--blush); border-color: transparent; }
+.phase:nth-child(3) { background: var(--sage);  border-color: transparent; }
+.phase--alert {
+  background: var(--oat);
+  border: 2px solid var(--ink-900);
+  color: var(--ink-900);
+}
+.phase--alert .phase-marker { color: var(--ink-900); }
+.phase--alert .phase-when { color: var(--ink-600); }
+.phase--alert p { color: var(--ink-700); }
+.phase--alert strong { color: var(--ink-900); }
+.phase--alert .phase-why { border-top-color: rgba(22, 20, 15, .2); color: var(--ink-600); }
+
+.badges li { background: var(--oat); border-color: transparent; color: var(--ink-700); }
+#contato { background: var(--blush); }
+
+/* Formulário B2B: sálvia clara no lugar do bloco escuro */
+.section--dark { background: var(--sage); color: var(--ink-900); }
+.section--dark .h2 { color: var(--ink-900); }
+.section--dark :focus-visible { outline-color: var(--ink-900); }
+.eyebrow--light, .section-lede--light { color: var(--ink-600); }
+.field label { color: var(--ink-600); }
+.field input, .field select {
+  background: rgba(251, 247, 241, .65);
+  color: var(--ink-900);
+  border: 1px solid rgba(22, 20, 15, .28);
+}
+.field input::placeholder { color: rgba(22, 20, 15, .45); }
+.field input:hover, .field select:hover { border-color: rgba(22, 20, 15, .55); }
+.field input:focus, .field select:focus { border-color: var(--ink-900); }
+.field select option { background: var(--sand-050); color: var(--ink-900); }
+.field-help { color: var(--ink-600); }
+.field-error { color: var(--err); }
+.field[data-invalid="true"] input, .field[data-invalid="true"] select { border-color: var(--err); }
+.form-status[data-kind="ok"] { color: var(--ok); }
+.form-status[data-kind="err"] { color: var(--err); }
+.form-legal { color: var(--ink-600); }
+.section--dark .btn-light { --btn-bg: var(--ink-900); --btn-fg: var(--sand-050); --btn-bd: var(--ink-900); }

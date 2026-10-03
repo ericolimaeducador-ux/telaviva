@@ -1,3 +1,11 @@
+/* Fontes self-hosted (sem requisição ao Google Fonts) */
+import '@fontsource/playfair-display/latin-400.css';
+import '@fontsource/playfair-display/latin-500.css';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-500.css';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+
 /* ============================================================
    TELA VIVA — comportamento da landing
    Vanilla ES modules. Cada init() é um componente isolado,
