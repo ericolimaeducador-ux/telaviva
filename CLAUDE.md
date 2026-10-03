@@ -13,6 +13,7 @@ Sem páginas de termos/privacidade (decisão do Erico: é só landing).
 
 ## Estado atual (main publicada)
 URL: https://ericolimaeducador-ux.github.io/telaviva/ — deploy por GitHub Actions a cada push na `main`.
+Hero: carrossel acessível com 3 imagens ilustrativas de marca (logo "tatuada" em pele clara/média/escura, `public/img/tela-pele-*.webp`, rótulo "Imagem ilustrativa"), troca a cada 6 s com botão de pausa; a logo é a própria imagem, por isso não há lockup em HTML sobre ela. A seção "problema" usa a pele média (`tela-pele-problema.webp`). São arte de marca, nunca resultado nem pele de cliente.
 Feito: 11 seções; alegações corrigidas; depoimento da Paula Carolina (literal) + 3 imagens autorizadas da Pele Rara em `public/img/pele-rara-*.webp`; contato oficial; rodapé com razão social/CNPJ; SEO + Open Graph + JSON-LD + robots/sitemap + favicons PNG; fontes self-hosted (@fontsource); paleta pastel.
 Formulário B2B: abre o WhatsApp com mensagem pré-preenchida (config em `CONTACT` no topo de `src/main.js`). Sem backend.
 
@@ -48,8 +49,8 @@ Se o clone local divergir: `git fetch && git reset --hard origin/main` (SVGs sol
 Originais em alta resolução das imagens Pele Rara (hoje 600 px); protocolo vigente por escrito; documento do fabricante para vegano/cruelty-free/dermatologicamente testado e nº ANVISA; confirmar que o estudo descreve a plataforma BioCic®; preço/margem; autorização por escrito da Paula Carolina para o site; busca INPI "Tela Viva" (NCL 3 e 35); domínio próprio (então: `base: '/'`, canonical, og:image, robots); foto oficial do kit completo; e-mail no domínio próprio; CNAE varejista se houver venda ao consumidor.
 
 ## Próximos passos sugeridos (pedir "ok" antes)
-1. Revisão visual no navegador e ajuste fino do pastel (contraste hero/formulário).
-2. Otimizar imagens (hero 319 KB, padrão 494 KB) e remover duplicata `skin-hero` e imagens não usadas (`emblema`, `skin-clara`, `skin-media`).
+1. Revisão visual: já conferida por screenshots (Chromium headless via Playwright Python + `vite preview`), que funciona mesmo quando o navegador do MCP bloqueia localhost.
+2. (feito) imagens otimizadas; sobram `public/brand/emblema.*` como fonte de marca, fora das páginas.
 3. Analytics sem cookie, só com decisão do Erico; hoje `data-track` não é lido por nada.
 4. Quando houver acervo real: preencher `TESTIMONIALS` em `src/main.js` (campos: quote, name, phase; image/studio/city opcionais).
 5. Depois: checkout próprio (Next/React, componentes já isolados em `init*`) — Tech Lead propõe antes.

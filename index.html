@@ -85,16 +85,31 @@
 
 <!-- ───────────────────────── 01 · HERO ───────────────────────── -->
 <section class="hero" id="top" data-component="SkinHero">
-  <div class="hero-media" aria-hidden="true"></div>
-  <div class="hero-scrim" aria-hidden="true"></div>
+  <!-- Imagens ILUSTRATIVAS de marca (a logo "tatuada" é arte, não pele de cliente nem resultado). -->
+  <div class="hero-stage" data-hero-slides>
+    <div class="hero-frame">
+    <figure class="hero-slide is-active" data-tone="clara">
+      <img src="/img/tela-pele-clara-1600.webp" srcset="/img/tela-pele-clara-800.webp 800w, /img/tela-pele-clara-1600.webp 1600w" sizes="100vw" alt="Marca Tela Viva tatuada em pele de tom claro" width="1600" height="893" fetchpriority="high" />
+    </figure>
+    <figure class="hero-slide" data-tone="media" aria-hidden="true">
+      <img src="/img/tela-pele-media-1600.webp" srcset="/img/tela-pele-media-800.webp 800w, /img/tela-pele-media-1600.webp 1600w" sizes="100vw" alt="Marca Tela Viva tatuada em pele de tom médio" width="1600" height="893" loading="lazy" />
+    </figure>
+    <figure class="hero-slide" data-tone="escura" aria-hidden="true">
+      <img src="/img/tela-pele-escura-1600.webp" srcset="/img/tela-pele-escura-800.webp 800w, /img/tela-pele-escura-1600.webp 1600w" sizes="100vw" alt="Marca Tela Viva tatuada em pele de tom escuro" width="1600" height="893" loading="lazy" />
+    </figure>
+    </div>
+    <div class="hero-bar">
+    <p class="illustrative">Imagem ilustrativa</p>
+    <div class="hero-controls" role="group" aria-label="Tons de pele">
+      <button type="button" class="hero-pause" aria-pressed="false" aria-label="Pausar a troca automática de imagens"></button>
+      <button type="button" class="hero-dot" aria-label="Pele de tom claro" aria-current="true"></button>
+      <button type="button" class="hero-dot" aria-label="Pele de tom médio" aria-current="false"></button>
+      <button type="button" class="hero-dot" aria-label="Pele de tom escuro" aria-current="false"></button>
+    </div>
+    </div>
+  </div>
 
-  <div class="wrap hero-content">
-    <p class="hero-lockup">
-      <span class="lockup-name">Tela Viva</span>
-      <span class="lockup-rule" aria-hidden="true"></span>
-      <span class="lockup-sub">Cuidados para pele tatuada</span>
-    </p>
-
+  <div class="wrap hero-copy">
     <h1 class="hero-title">A arte dura o que a pele sustenta.</h1>
     <p class="hero-sub">O único protocolo de cuidado para pele tatuada que começa duas semanas <em>antes</em> da agulha.</p>
 
@@ -103,8 +118,6 @@
       <a class="btn btn-ghost-light" href="#parceiros" data-track="hero_cta_b2b">Sou tatuador ou estúdio →</a>
     </div>
   </div>
-
-  <div class="hero-scroll-hint" aria-hidden="true"><span></span></div>
 </section>
 
 <!-- ───────────────────────── 02 · BIFURCAÇÃO ───────────────────────── -->
@@ -135,7 +148,8 @@
 <section class="section" id="problema" data-component="ProblemSection">
   <div class="wrap split">
     <figure class="split-media">
-      <img src="/img/skin-macro.jpg" alt="Macrofotografia de pele humana mostrando o microrrelevo natural da superfície" loading="lazy" width="1200" height="800" />
+      <img src="/img/tela-pele-problema.webp" alt="Marca Tela Viva tatuada em pele de tom médio" loading="lazy" width="1200" height="800" />
+      <figcaption class="illustrative">Imagem ilustrativa</figcaption>
     </figure>
 
     <div class="split-text">
@@ -183,7 +197,7 @@
         <p class="phase-when">Após liberação profissional</p>
         <h3 class="h3">Manutenção do traçado</h3>
         <p>Com a pele íntegra e liberada pelo profissional, retome a higienização e aplique o Hidratante Concentrado <strong>uma a duas vezes ao dia</strong>, em camada fina, sempre com a pele limpa.</p>
-        <p class="phase-why">A hidratação contínua sustenta a maciez da pele e a definição do contorno ao longo do tempo.</p>
+        <p class="phase-why">A hidratação contínua ajuda a manter a pele macia ao longo do tempo.</p>
       </li>
     </ol>
 
