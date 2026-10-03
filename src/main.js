@@ -290,7 +290,7 @@ function initReveal() {
 function initPendingLinks() {
   document.querySelectorAll('[data-pending="true"]').forEach((el) => {
     if (CONTACT.whatsapp) {
-      el.href = waLink('Olá! Tenho uma dúvida sobre o protocolo Tela Viva.');
+      el.href = waLink('Olá! Tenho uma dúvida sobre o protocolo do Kit Tattoo Pele Rara®.');
       el.target = '_blank';
       el.rel = 'noopener';
       el.removeAttribute('data-pending');
