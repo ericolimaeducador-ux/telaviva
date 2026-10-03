@@ -970,3 +970,26 @@ button[data-busy="true"] { opacity: .6; pointer-events: none; }
   background: rgba(251, 247, 241, .86);
   border-radius: 999px;
 }
+
+/* Depoimento com comparativo lado a lado (layout da página da Pele Rara) */
+.testimonial--compare { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 860px) {
+  .testimonial--compare { grid-template-columns: 1fr 1fr; align-items: stretch; }
+  .testimonial--compare .testimonial-body { align-content: center; padding: var(--s-12); }
+}
+.testimonial--compare .testimonial-quote { font-size: clamp(1.125rem, 1.6vw, 1.375rem); }
+.testimonial-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--sand-050); }
+.compare-shot { position: relative; margin: 0; }
+.compare-shot img { width: 100%; height: 100%; aspect-ratio: 1 / 1.05; object-fit: cover; }
+.compare-shot figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: var(--s-2) var(--s-3);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink-900);
+  background: rgba(251, 247, 241, .88);
+}
+.testimonial-source { font-style: italic; }

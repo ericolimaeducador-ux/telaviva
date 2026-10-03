@@ -70,7 +70,7 @@ function initFaq() {
 /* ─────────── Depoimentos ───────────
    ⚠ COMPLIANCE: só renderiza com acervo REAL licenciado.
    Formato esperado de cada item:
-   { image?, alt?, quote, name, studio?, city?, phase, source? }
+   { image?, alt?, quote, name, studio?, city?, phase, source?, compare?: [{ src, label, alt }] }
    image/studio/city são opcionais. Imagem: só recorte da tatuagem, sem rosto.
    Citação sempre literal, sem edição. Enquanto estiver vazio, a seção fica oculta. */
 const TESTIMONIALS = [
@@ -79,6 +79,11 @@ const TESTIMONIALS = [
     name: 'Paula Carolina',
     phase: 'Pós-tatuagem · comparativo lado a lado',
     source: 'Depoimento concedido à Pele Rara®, com uso autorizado.',
+    // Fotos e legendas exatamente como na página da Pele Rara® (uso autorizado).
+    compare: [
+      { src: 'img/depo-paula-com-pele-rara.webp', label: 'Com Pele Rara®', alt: 'Tatuagem de figura feminina com caveira e flor na coxa de Paula Carolina, lado com Pele Rara®' },
+      { src: 'img/depo-paula-sem-pele-rara.webp', label: 'Sem Pele Rara®', alt: 'Tatuagem de tigre e cobra na outra perna de Paula Carolina, lado sem Pele Rara®' },
+    ],
   },
 ];
 
@@ -102,8 +107,16 @@ function initTestimonials() {
     const img = t.image
       ? `<img src="${escapeHtml(t.image)}" alt="${escapeHtml(t.alt)}" loading="lazy" />`
       : '';
+    const base = import.meta.env.BASE_URL;
+    const compare = t.compare?.length
+      ? `<div class="testimonial-compare">${t.compare.map((c) => `
+          <figure class="compare-shot">
+            <img src="${base}${escapeHtml(c.src)}" alt="${escapeHtml(c.alt)}" loading="lazy" width="640" height="640" />
+            <figcaption>${escapeHtml(c.label)}</figcaption>
+          </figure>`).join('')}</div>`
+      : '';
     return `
-    <figure class="testimonial">
+    <figure class="testimonial${compare ? ' testimonial--compare' : ''}">
       ${img}
       <figcaption class="testimonial-body">
         <blockquote class="testimonial-quote">“${escapeHtml(t.quote)}”</blockquote>
@@ -111,6 +124,7 @@ function initTestimonials() {
         <p class="testimonial-meta">${escapeHtml(t.phase)}</p>
         ${t.source ? `<p class="testimonial-meta testimonial-source">${escapeHtml(t.source)}</p>` : ''}
       </figcaption>
+      ${compare}
     </figure>`;
   }).join('');
 
