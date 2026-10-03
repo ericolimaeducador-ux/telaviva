@@ -5,7 +5,7 @@ Tom: direto e técnico, sem rodeios de cortesia. Trade-off → opções com pró
 Módulo novo → apresentar plano e esperar "ok" antes de codar.
 
 ## O que é
-Landing page **Tela Viva — Cuidados para Pele Tatuada**. Erico é representante oficial da **Pele Rara®** (marca da Sympol Biotecnologia LTDA) para o segmento de tatuagem. Produto: Kit Tattoo (Espuma Sensação Ultra-leve 150 ml, BioBloc + Hidratante Concentrado 30 g, BioCic®).
+Landing page **Tela Viva — Cuidados para Pele Tatuada**. Erico é representante oficial da **Pele Rara®** (marca da Sympol Biotecnologia LTDA) para o segmento de tatuagem. Produto: Kit Tattoo (Espuma Sensação Ultra-leve 150 ml, BioBloc + Hidratante Concentrado 60 g, BioCic®; antes era 30 g, trocado por decisão do Erico — a foto do braço em public/img mostra o frasco de 30 mL e deve ser trocada pela do tubo de 60 g).
 Diferencial: protocolo em 3 fases, com preparo ANTES da tatuagem.
 Operadora: JSETTE7 Comércio de Produtos Médicos e Hospitalares LTDA, CNPJ 54.765.439/0001-34 (a marca é Tela Viva; o nome da empresa só aparece no rodapé/JSON-LD).
 Objetivo no lançamento: **captação** (B2B estúdios + interessados). Sem checkout, sem preço publicado. Checkout próprio só depois.
