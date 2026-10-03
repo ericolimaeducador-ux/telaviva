@@ -144,7 +144,7 @@ const CONTACT = { whatsapp: '5511914977007', email: 'settedistribuidora0777@gmai
    Remover o Web3Forms depois do teste real da função. */
 const LEAD_API = {
   endpoint: '',          // ex.: https://telaviva-leads.<conta>.workers.dev/lead
-  turnstileSiteKey: '',  // chave de site (pública) do widget Turnstile
+  turnstileSiteKey: '0x4AAAAAAFNGsovcwnENNhZX', // chave de site (pública) do widget Turnstile
 };
 const WEB3FORMS = {
   endpoint: 'https://api.web3forms.com/submit',
