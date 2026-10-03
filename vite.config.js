@@ -6,5 +6,11 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsInlineLimit: 2048,
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+        privacy: 'politica-de-privacidade.html',
+      },
+    },
   },
 });
