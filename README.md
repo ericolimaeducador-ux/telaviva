@@ -68,6 +68,6 @@ Display: Playfair Display · Corpo: Inter · Mono: JetBrains Mono.
 2. **Alegações**: a tecnologia é coadjuvante de barreira cutânea. Nunca afirmar que previne
    queloide ou infecção, nem que reverte hematoma. A evidência BioCic® é de mecanismo em modelo
    ex vivo — não de eficácia clínica final, e o site precisa dizer isso.
-3. **Protocolo**: três fases, com a fase 2 (uso suspenso sobre tatuagem recente) sempre visível.
+3. **Protocolo**: três fases, com a fase 2 (lavagem e pele ao redor, nunca sobre crosta ou ferida) sempre visível.
 4. **Ilustração de mecanismo**: qualquer peça que explique a ação do produto leva legenda
    "representação ilustrativa", e nunca mostra partícula atravessando pele lesionada.
