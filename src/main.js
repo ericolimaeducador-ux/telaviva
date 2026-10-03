@@ -137,6 +137,10 @@ function initTestimonials() {
    Enquanto vazio, o formulário NÃO simula envio e o botão de WhatsApp fica inativo. */
 const CONTACT = { whatsapp: '5511914977007', email: 'settedistribuidora0777@gmail.com' };
 
+/* Web3Forms: a Access Key é pública por desenho (só permite enviar ao e-mail cadastrado). */
+const LEAD_ENDPOINT = 'https://api.web3forms.com/submit';
+const LEAD_ACCESS_KEY = 'bb2cb53e-a1a4-43b9-93e2-d408652ca2b7';
+
 const waLink = (text = '') =>
   `https://wa.me/${CONTACT.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
 
@@ -235,8 +239,8 @@ function initPartnerForm() {
     }
 
     /* ── Envio ────────────────────────────────────────────────────
-       Sem backend: o formulário abre o WhatsApp oficial com os dados
-       preenchidos; o lead só existe quando o usuário toca em enviar.
+       Envia o lead por e-mail (Web3Forms) e abre o WhatsApp oficial com os dados
+       preenchidos. Os canais são independentes: se um falhar, o outro segue.
        Sem canal configurado, não simulamos sucesso. */
     if (!CONTACT.whatsapp) {
       status.dataset.kind = 'err';
@@ -248,26 +252,63 @@ function initPartnerForm() {
     const label = submit.dataset.label || submit.textContent;
     submit.textContent = 'Abrindo o WhatsApp…';
 
+    const v = (id) => form.querySelector(`#${id}`)?.value.trim() ?? '';
+    const volume = form.querySelector('#volume')?.selectedOptions[0]?.textContent ?? '';
+    let waOpened = false;
+    let emailSent = false;
+
     try {
-      const v = (id) => form.querySelector(`#${id}`)?.value.trim() ?? '';
       const text = [
         'Olá! Quero informações sobre a revenda do Kit Tattoo.',
         `Estúdio: ${v('studio')}`,
         `CNPJ: ${v('cnpj')}`,
         `Nome: ${v('name')}`,
         `WhatsApp: ${v('whatsapp')}`,
-        `Sessões por mês: ${form.querySelector('#volume')?.selectedOptions[0]?.textContent ?? ''}`,
+        `Sessões por mês: ${volume}`,
       ].join('\n');
 
-      const win = window.open(waLink(text), '_blank', 'noopener');
-      if (!win) throw new Error('popup bloqueado');
+      // window.open antes de qualquer await, senão o navegador bloqueia o pop-up.
+      // Sem a feature 'noopener': com ela, window.open devolve null mesmo quando abre.
+      const win = window.open(waLink(text), '_blank');
+      if (win) win.opener = null;
+      waOpened = Boolean(win);
 
-      status.dataset.kind = 'ok';
-      status.textContent = 'Abrimos o WhatsApp com os seus dados. É só enviar a mensagem.';
-      form.reset();
+      try {
+        const res = await fetch(LEAD_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: LEAD_ACCESS_KEY,
+            subject: `Novo lead B2B — ${v('studio')}`,
+            from_name: 'Tela Viva (site)',
+            botcheck: form.querySelector('#botcheck')?.checked ? 'true' : '',
+            Estudio: v('studio'),
+            CNPJ: v('cnpj'),
+            Nome: v('name'),
+            WhatsApp: v('whatsapp'),
+            'Sessoes por mes': volume,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        emailSent = res.ok && data.success !== false;
+      } catch {
+        emailSent = false;
+      }
+
+      if (emailSent || waOpened) {
+        status.dataset.kind = 'ok';
+        status.textContent = emailSent && waOpened
+          ? 'Recebemos o seu contato e abrimos o WhatsApp para agilizar o retorno.'
+          : emailSent
+            ? 'Recebemos o seu contato. Se preferir falar agora, use o botão "Falar no WhatsApp".'
+            : 'Não conseguimos registrar o envio por e-mail. Abrimos o WhatsApp: envie a mensagem para concluir.';
+        form.reset();
+      } else {
+        throw new Error('nenhum canal disponível');
+      }
     } catch {
       status.dataset.kind = 'err';
-      status.textContent = 'Não conseguimos abrir o WhatsApp. Tente novamente ou use o botão "Falar no WhatsApp" abaixo.';
+      status.textContent = 'Não conseguimos enviar. Tente novamente ou use o botão "Falar no WhatsApp" abaixo.';
     } finally {
       submit.dataset.busy = 'false';
       submit.textContent = label;
