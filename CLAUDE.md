@@ -29,7 +29,9 @@ Formulário B2B: abre o WhatsApp com mensagem pré-preenchida (config em `CONTAC
 - Nenhuma alegação terapêutica (queloide, infecção, hematoma, "cicatriza", "desbota/não desbota", "reativa a cor").
 - Proibido sem documento do fabricante: "vegano", "cruelty-free", "dermatologicamente testado", nº ANVISA, "troca 30 dias", "envio rastreado", prazos de resposta. Hoje estão removidos ou comentados no HTML (FAQ de ANVISA e vegano). Nunca inventar número de registro, métrica ou estudo.
 - Evidência da BioCic® é **ex vivo** (Pereira Oliveira et al., Pharmaceutics 2023, DOI 10.3390/pharmaceutics15030999). Sempre dizer que não é eficácia clínica nem em pele tatuada.
-- Fase 2 do protocolo (tatuagem recente, com crosta/ferida): uso **suspenso**; vale só a orientação do tatuador/dermatologista. Nunca mostrar partículas atravessando pele lesionada.
+- Protocolo = o do fabricante (decisão do Erico, 03/10/2026): 2 semanas antes (espuma a cada banho + hidratante 4x/dia na região e ao redor); 15 dias após a sessão (lavar a tatuagem com a espuma ao menos 2x/dia + hidratante 4x/dia na pele AO REDOR, nunca sobre crosta/ferida); depois manutenção 1–2x/dia. Sobre tatuagem em cicatrização valem tatuador/dermatologista. O texto oficial cita "evitar infecção e queloides", "reverter hematomas" e "regeneração": NUNCA repetir no site (alegação de tratamento em cosmético).
+- O Kit Tattoo traz só a Espuma Sensação Ultra-leve 150 ml. O protocolo oficial menciona a Espuma/Sabonete de Amplo Espectro na 1ª semana antes e no pós: pendente confirmar com a Pele Rara que a Ultra-leve serve nessas fases.
+- Nunca mostrar partículas atravessando pele lesionada.
 - Depoimentos: reais, autorizados, citação literal, **sem rosto** (só recorte da tatuagem). Sem rosto ou antes/depois gerados por IA.
 - Produtos e rótulos da Pele Rara® nunca recebem a marca Tela Viva. Imagens do fabricante só com o crédito e sem alteração do conteúdo (exceto recorte para tirar rosto).
 - Ilustrações de mecanismo levam "representação ilustrativa".
