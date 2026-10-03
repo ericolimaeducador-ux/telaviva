@@ -70,7 +70,7 @@ function initFaq() {
 /* ─────────── Depoimentos ───────────
    ⚠ COMPLIANCE: só renderiza com acervo REAL licenciado.
    Formato esperado de cada item:
-   { image?, alt?, quote, name, studio?, city?, phase }
+   { image?, alt?, quote, name, studio?, city?, phase, source? }
    image/studio/city são opcionais. Imagem: só recorte da tatuagem, sem rosto.
    Citação sempre literal, sem edição. Enquanto estiver vazio, a seção fica oculta. */
 const TESTIMONIALS = [
@@ -78,6 +78,7 @@ const TESTIMONIALS = [
     quote: 'Usei a Pele Rara® em uma perna e um hidratante 3x mais caro na outra. O lado com Pele Rara® ficou claramente melhor e com menos dor.',
     name: 'Paula Carolina',
     phase: 'Pós-tatuagem · comparativo lado a lado',
+    source: 'Depoimento concedido à Pele Rara®, com uso autorizado.',
   },
 ];
 
@@ -108,6 +109,7 @@ function initTestimonials() {
         <blockquote class="testimonial-quote">“${escapeHtml(t.quote)}”</blockquote>
         <p class="testimonial-meta">${who}</p>
         <p class="testimonial-meta">${escapeHtml(t.phase)}</p>
+        ${t.source ? `<p class="testimonial-meta testimonial-source">${escapeHtml(t.source)}</p>` : ''}
       </figcaption>
     </figure>`;
   }).join('');
