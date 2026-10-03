@@ -25,56 +25,6 @@ function initHeader() {
   io.observe(hero);
 }
 
-/* ─────────── Hero: três tons de pele ───────────
-   Troca automática a cada 6 s; pausa em hover/foco, com botão de pausa
-   e sem autoplay para quem prefere menos movimento (WCAG 2.2.2). */
-function initHeroSlides() {
-  const stage = document.querySelector('[data-hero-slides]');
-  if (!stage) return;
-  const slides = [...stage.querySelectorAll('.hero-slide')];
-  const dots = [...stage.querySelectorAll('.hero-dot')];
-  const pauseBtn = stage.querySelector('.hero-pause');
-  if (slides.length < 2) return;
-
-  let index = 0;
-  let timer = null;
-  let userPaused = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let hovering = false;
-
-  const show = (n) => {
-    index = (n + slides.length) % slides.length;
-    slides.forEach((s, k) => {
-      const on = k === index;
-      s.classList.toggle('is-active', on);
-      s.setAttribute('aria-hidden', String(!on));
-    });
-    dots.forEach((d, k) => d.setAttribute('aria-current', String(k === index)));
-  };
-  const stop = () => { clearInterval(timer); timer = null; };
-  const start = () => {
-    stop();
-    if (userPaused || hovering) return;
-    timer = setInterval(() => show(index + 1), 6000);
-  };
-  const syncPause = () => {
-    pauseBtn?.setAttribute('aria-pressed', String(userPaused));
-    pauseBtn?.setAttribute(
-      'aria-label',
-      userPaused ? 'Retomar a troca automática de imagens' : 'Pausar a troca automática de imagens'
-    );
-  };
-
-  dots.forEach((d, k) => d.addEventListener('click', () => { show(k); start(); }));
-  pauseBtn?.addEventListener('click', () => { userPaused = !userPaused; syncPause(); start(); });
-  stage.addEventListener('mouseenter', () => { hovering = true; stop(); });
-  stage.addEventListener('mouseleave', () => { hovering = false; start(); });
-  stage.addEventListener('focusin', () => { hovering = true; stop(); });
-  stage.addEventListener('focusout', () => { hovering = false; start(); });
-
-  syncPause();
-  start();
-}
-
 /* ─────────── Bifurcação B2C / B2B ───────────
    Grava a escolha em localStorage e rola para a seção correspondente.
    Quando houver backend, trocar por cookie httpOnly + render server-side. */
@@ -357,7 +307,6 @@ function initYear() {
 /* ─────────── Bootstrap ─────────── */
 function boot() {
   initHeader();
-  initHeroSlides();
   initPathSplit();
   initFaq();
   initTestimonials();
