@@ -13,7 +13,7 @@ Sem páginas de termos/privacidade (decisão do Erico: é só landing).
 
 ## Estado atual (main publicada)
 URL: https://ericolimaeducador-ux.github.io/telaviva/ — deploy por GitHub Actions a cada push na `main`.
-Hero: carrossel acessível com 3 imagens ilustrativas de marca (logo "tatuada" em pele clara/média/escura, `public/img/tela-pele-*.webp`, rótulo "Imagem ilustrativa"), troca a cada 6 s com botão de pausa; a logo é a própria imagem, por isso não há lockup em HTML sobre ela. A seção "problema" usa a pele média (`tela-pele-problema.webp`). São arte de marca, nunca resultado nem pele de cliente.
+Hero: tipografia (lockup em HTML + título) sobre a pele clara desfocada com véu claro — decisão do Erico, não trocar por imagem com logo. As peles com a logo "tatuada" (imagens ILUSTRATIVAS de marca, rótulo "Imagem ilustrativa") entram só nas caixas de imagem de pele, hoje a seção "problema" (`tela-pele-problema.webp`). Nunca apresentá-las como resultado ou pele de cliente.
 Feito: 11 seções; alegações corrigidas; depoimento da Paula Carolina (literal) + 3 imagens autorizadas da Pele Rara em `public/img/pele-rara-*.webp`; contato oficial; rodapé com razão social/CNPJ; SEO + Open Graph + JSON-LD + robots/sitemap + favicons PNG; fontes self-hosted (@fontsource); paleta pastel.
 Formulário B2B: abre o WhatsApp com mensagem pré-preenchida (config em `CONTACT` no topo de `src/main.js`). Sem backend.
 
