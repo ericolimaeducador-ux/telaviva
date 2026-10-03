@@ -872,3 +872,6 @@ button[data-busy="true"] { opacity: .6; pointer-events: none; }
 .testimonial-body:only-child { padding: var(--s-8); }
 .disclaimer a { text-decoration: underline; text-underline-offset: 3px; }
 .btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+
+.contact-alt { margin-top: var(--s-4); font-size: var(--fs-micro); color: var(--fg-muted); }
+.contact-alt a { text-decoration: underline; text-underline-offset: 3px; }

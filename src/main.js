@@ -111,7 +111,7 @@ function initTestimonials() {
 /* ─────────── Canais de contato ───────────
    Preencher com os dados oficiais. whatsapp: só dígitos com DDI+DDD (ex.: 5511900000000).
    Enquanto vazio, o formulário NÃO simula envio e o botão de WhatsApp fica inativo. */
-const CONTACT = { whatsapp: '', email: '' };
+const CONTACT = { whatsapp: '5511914977007', email: 'settedistribuidora0777@gmail.com' };
 
 const waLink = (text = '') =>
   `https://wa.me/${CONTACT.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
