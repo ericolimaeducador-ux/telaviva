@@ -1,0 +1,270 @@
+/* ============================================================
+   TELA VIVA — comportamento da landing
+   Vanilla ES modules. Cada init() é um componente isolado,
+   portável 1:1 para React/Next quando o checkout próprio entrar.
+   ============================================================ */
+
+/* ─────────── Header: estado "stuck" após sair do hero ─────────── */
+function initHeader() {
+  const header = document.querySelector('.site-header');
+  const hero = document.querySelector('.hero');
+  if (!header || !hero) return;
+
+  const io = new IntersectionObserver(
+    ([entry]) => header.setAttribute('data-stuck', String(!entry.isIntersecting)),
+    { rootMargin: '-68px 0px 0px 0px', threshold: 0 }
+  );
+  io.observe(hero);
+}
+
+/* ─────────── Bifurcação B2C / B2B ───────────
+   Grava a escolha em localStorage e rola para a seção correspondente.
+   Quando houver backend, trocar por cookie httpOnly + render server-side. */
+const PATH_KEY = 'telaviva:path';
+
+function initPathSplit() {
+  const cards = document.querySelectorAll('.path-card');
+  if (!cards.length) return;
+
+  let saved = null;
+  try { saved = localStorage.getItem(PATH_KEY); } catch { /* storage bloqueado */ }
+
+  const apply = (value) => {
+    cards.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.path === value)));
+    document.documentElement.setAttribute('data-audience', value);
+  };
+
+  if (saved) apply(saved);
+
+  cards.forEach((card) => {
+    card.addEventListener('click', () => {
+      const value = card.dataset.path;
+      apply(value);
+      try { localStorage.setItem(PATH_KEY, value); } catch { /* noop */ }
+
+      const target = document.getElementById(value === 'b2b' ? 'parceiros' : 'protocolo');
+      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+/* ─────────── FAQ: um aberto por vez ─────────── */
+function initFaq() {
+  const items = document.querySelectorAll('.faq details');
+  items.forEach((item) => {
+    item.addEventListener('toggle', () => {
+      if (!item.open) return;
+      items.forEach((other) => { if (other !== item) other.open = false; });
+    });
+  });
+}
+
+/* ─────────── Depoimentos ───────────
+   ⚠ COMPLIANCE: só renderiza com acervo REAL licenciado.
+   Formato esperado de cada item:
+   { image, alt, quote, name, studio, city, phase }
+   Enquanto TESTIMONIALS estiver vazio, a seção permanece oculta. */
+const TESTIMONIALS = [];
+
+function initTestimonials() {
+  const section = document.querySelector('[data-component="TestimonialGrid"]');
+  const grid = document.getElementById('testimonial-grid');
+  if (!section || !grid) return;
+
+  if (!TESTIMONIALS.length) {
+    section.hidden = true;
+    section.setAttribute('data-state', 'empty');
+    return;
+  }
+
+  grid.innerHTML = TESTIMONIALS.map((t) => `
+    <figure class="testimonial">
+      <img src="${t.image}" alt="${t.alt}" loading="lazy" />
+      <figcaption class="testimonial-body">
+        <blockquote class="testimonial-quote">“${t.quote}”</blockquote>
+        <p class="testimonial-meta">${t.name} · ${t.studio} · ${t.city}</p>
+        <p class="testimonial-meta">${t.phase}</p>
+      </figcaption>
+    </figure>
+  `).join('');
+
+  section.hidden = false;
+  section.setAttribute('data-state', 'ready');
+}
+
+/* ─────────── Máscaras + validação do formulário B2B ─────────── */
+function maskCNPJ(value) {
+  const d = value.replace(/\D/g, '').slice(0, 14);
+  return d
+    .replace(/^(\d{2})(\d)/, '$1.$2')
+    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1/$2')
+    .replace(/(\d{4})(\d)/, '$1-$2');
+}
+
+function maskPhone(value) {
+  const d = value.replace(/\D/g, '').slice(0, 11);
+  if (d.length <= 10) return d.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d)/, '$1-$2');
+  return d.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
+}
+
+/** Validação real dos dígitos verificadores do CNPJ (módulo 11). */
+function isValidCNPJ(raw) {
+  const d = raw.replace(/\D/g, '');
+  if (d.length !== 14 || /^(\d)\1{13}$/.test(d)) return false;
+
+  const check = (len) => {
+    let sum = 0;
+    let pos = len - 7;
+    for (let i = 0; i < len; i++) {
+      sum += Number(d[i]) * pos--;
+      if (pos < 2) pos = 9;
+    }
+    const r = sum % 11;
+    return r < 2 ? 0 : 11 - r;
+  };
+
+  return check(12) === Number(d[12]) && check(13) === Number(d[13]);
+}
+
+function setFieldError(input, message) {
+  const field = input.closest('.field');
+  const error = field?.querySelector('[data-error-for]');
+  const invalid = Boolean(message);
+
+  field?.setAttribute('data-invalid', String(invalid));
+  input.setAttribute('aria-invalid', String(invalid));
+  if (error) {
+    error.hidden = !invalid;
+    if (message) error.textContent = message;
+  }
+}
+
+function initPartnerForm() {
+  const form = document.getElementById('partner-form');
+  if (!form) return;
+
+  const cnpj = form.querySelector('#cnpj');
+  const phone = form.querySelector('#whatsapp');
+  const status = document.getElementById('form-status');
+  const submit = form.querySelector('button[type="submit"]');
+
+  cnpj?.addEventListener('input', (e) => {
+    e.target.value = maskCNPJ(e.target.value);
+    setFieldError(e.target, '');
+  });
+  phone?.addEventListener('input', (e) => {
+    e.target.value = maskPhone(e.target.value);
+    setFieldError(e.target, '');
+  });
+
+  form.querySelectorAll('input, select').forEach((el) => {
+    el.addEventListener('input', () => { if (el !== cnpj && el !== phone) setFieldError(el, ''); });
+  });
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    let ok = true;
+
+    form.querySelectorAll('[required]').forEach((el) => {
+      if (!el.value.trim()) { setFieldError(el, el.dataset.required || 'Campo obrigatório.'); ok = false; }
+    });
+
+    if (cnpj?.value && !isValidCNPJ(cnpj.value)) {
+      setFieldError(cnpj, 'CNPJ inválido. Confira os 14 dígitos.');
+      ok = false;
+    }
+    if (phone?.value && phone.value.replace(/\D/g, '').length < 10) {
+      setFieldError(phone, 'Informe um WhatsApp com DDD.');
+      ok = false;
+    }
+
+    if (!ok) {
+      status.dataset.kind = 'err';
+      status.textContent = 'Revise os campos destacados.';
+      form.querySelector('[data-invalid="true"] input, [data-invalid="true"] select')?.focus();
+      return;
+    }
+
+    /* ── ESTADO: sucesso ──────────────────────────────────────────
+       Sem backend nesta fase. Quando o endpoint existir, trocar por:
+         await fetch('/api/partners', { method:'POST', body: JSON.stringify(data) })
+       com try/catch, timeout e estado de erro de rede.
+       Nunca enviar dado de parceiro para serviço de terceiro sem consentimento. */
+    submit.dataset.busy = 'true';
+    const label = submit.dataset.label || submit.textContent;
+    submit.textContent = 'Enviando…';
+
+    try {
+      await new Promise((r) => setTimeout(r, 600));
+      status.dataset.kind = 'ok';
+      status.textContent = 'Recebido. Um consultor responde em até 4 horas úteis.';
+      form.reset();
+    } catch {
+      status.dataset.kind = 'err';
+      status.textContent = 'Não conseguimos enviar agora. Tente novamente em instantes.';
+    } finally {
+      submit.dataset.busy = 'false';
+      submit.textContent = label;
+    }
+  });
+}
+
+/* ─────────── Reveal progressivo ─────────── */
+function initReveal() {
+  const targets = document.querySelectorAll(
+    '.section .eyebrow, .section .h2, .section-lede, .path-card, .phase, .stat, .rigor, .kit-media, .kit-info, .table-scroll, .partner-form'
+  );
+  if (!targets.length) return;
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  targets.forEach((el, i) => {
+    el.setAttribute('data-reveal', '');
+    el.style.transitionDelay = `${Math.min(i % 4, 3) * 60}ms`;
+  });
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.setAttribute('data-reveal', 'in');
+      io.unobserve(entry.target);
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+  targets.forEach((el) => io.observe(el));
+}
+
+/* ─────────── CTAs ainda sem destino ─────────── */
+function initPendingLinks() {
+  document.querySelectorAll('[data-pending="true"]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      // TODO: trocar href pelo WhatsApp oficial e remover data-pending
+      console.warn('[Tela Viva] CTA sem destino definido:', el.dataset.track);
+    });
+  });
+}
+
+function initYear() {
+  const el = document.getElementById('year');
+  if (el) el.textContent = String(new Date().getFullYear());
+}
+
+/* ─────────── Bootstrap ─────────── */
+function boot() {
+  initHeader();
+  initPathSplit();
+  initFaq();
+  initTestimonials();
+  initPartnerForm();
+  initReveal();
+  initPendingLinks();
+  initYear();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
