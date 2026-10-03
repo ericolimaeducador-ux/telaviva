@@ -268,7 +268,10 @@ function initPartnerForm() {
       ].join('\n');
 
       // window.open antes de qualquer await, senão o navegador bloqueia o pop-up.
-      waOpened = Boolean(window.open(waLink(text), '_blank', 'noopener'));
+      // Sem a feature 'noopener': com ela, window.open devolve null mesmo quando abre.
+      const win = window.open(waLink(text), '_blank');
+      if (win) win.opener = null;
+      waOpened = Boolean(win);
 
       try {
         const res = await fetch(LEAD_ENDPOINT, {
