@@ -323,6 +323,24 @@ function initYear() {
   if (el) el.textContent = String(new Date().getFullYear());
 }
 
+/* ─────────── Vídeo (fachada leve do YouTube) ─────────── */
+function initVideo() {
+  document.querySelectorAll('[data-video-id]').forEach((frame) => {
+    const btn = frame.querySelector('.video-play');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${frame.dataset.videoId}?autoplay=1&rel=0`;
+      iframe.title = frame.dataset.videoTitle || 'Vídeo';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allowFullscreen = true;
+      frame.replaceChildren(iframe);
+      iframe.focus();
+    }, { once: true });
+  });
+}
+
 /* ─────────── Bootstrap ─────────── */
 function boot() {
   initHeader();
@@ -332,6 +350,7 @@ function boot() {
   initPartnerForm();
   initReveal();
   initPendingLinks();
+  initVideo();
   initYear();
 }
 
